@@ -11,3 +11,10 @@
 .navbar{
   background-color:blue imor !important;
 }
+
+.resgister-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+}
