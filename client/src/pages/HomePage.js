@@ -75,26 +75,28 @@ const HomePage = () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
         setLoading(true);
-        const res = await axios.post("/api/v1/transections/get-transection", {
+        const res = await axios.post("/transections/get-transection", {
           userid: user._id,
           frequency,
           selectedDate,
           type,
         });
-        setAllTransection(res.data);
         setLoading(false);
+        setAllTransection(res.data);
+        console.log(res.data);
       } catch (error) {
+        console.log(error);
         message.error("Ftech Issue With Tranction");
       }
     };
     getAllTransactions();
-  }, [frequency, selectedDate, type, setAllTransection]);
+  }, [frequency, selectedDate, type]);
 
   //delete handler
   const handleDelete = async (record) => {
     try {
       setLoading(true);
-      await axios.post("/api/v1/transections/delete-transection", {
+      await axios.post("/transections/delete-transection", {
         transacationId: record._id,
       });
       setLoading(false);
@@ -112,7 +114,7 @@ const HomePage = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
       if (editable) {
-        await axios.post("/api/v1/transections/edit-transection", {
+        await axios.post("/transections/edit-transection", {
           payload: {
             ...values,
             userId: user._id,
@@ -122,7 +124,7 @@ const HomePage = () => {
         setLoading(false);
         message.success("Transaction Updated Successfully");
       } else {
-        await axios.post("/api/v1/transections/add-transection", {
+        await axios.post("/transections/add-transection", {
           ...values,
           userid: user._id,
         });
@@ -133,7 +135,7 @@ const HomePage = () => {
       setEditable(null);
     } catch (error) {
       setLoading(false);
-      message.error("please fill all fields");
+      message.error("Faild to add transection");
     }
   };
 
@@ -156,13 +158,19 @@ const HomePage = () => {
             />
           )}
         </div>
-        <div className="filter-tab ">
+        <div>
           <h6>Select Type</h6>
           <Select value={type} onChange={(values) => setType(values)}>
             <Select.Option value="all">ALL</Select.Option>
             <Select.Option value="income">INCOME</Select.Option>
             <Select.Option value="expense">EXPENSE</Select.Option>
           </Select>
+          {frequency === "custom" && (
+            <RangePicker
+              value={selectedDate}
+              onChange={(values) => setSelectedate(values)}
+            />
+          )}
         </div>
         <div className="switch-icons">
           <UnorderedListOutlined
@@ -206,7 +214,7 @@ const HomePage = () => {
           initialValues={editable}
         >
           <Form.Item label="Amount" name="amount">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <Form.Item label="type" name="type">
             <Select>
@@ -231,10 +239,10 @@ const HomePage = () => {
             <Input type="date" />
           </Form.Item>
           <Form.Item label="Refrence" name="refrence">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <Form.Item label="Description" name="description">
-            <Input type="text" required />
+            <Input type="text" />
           </Form.Item>
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary">
